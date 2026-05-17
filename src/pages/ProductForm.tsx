@@ -27,6 +27,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
   const [images, setImages] = useState<WCImage[]>([]);
   const [selectedCats, setSelectedCats] = useState<number[]>([]);
   const [attributes, setAttributes] = useState<WCAttribute[]>([]);
+  const [isStep4Ready, setIsStep4Ready] = useState(false);
+
+  useEffect(() => {
+    if (step === 4) {
+      const timer = setTimeout(() => setIsStep4Ready(true), 600);
+      return () => clearTimeout(timer);
+    } else {
+      setIsStep4Ready(false);
+    }
+  }, [step]);
 
   useEffect(() => {
     async function loadMeta() {
@@ -61,7 +71,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step !== 4) return;
+    if (step !== 4 || !isStep4Ready) return;
     if (!name.trim() || !regularPrice.trim()) {
       alert('Product name and regular price are required.');
       return;
@@ -295,7 +305,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
             <AttributeManager attributes={attributes} onChange={setAttributes} />
 
             {/* Success summary confirmation */}
-            <div className="bg-emerald-50 border border-emerald-100 p-4.5 rounded-xl flex items-start gap-3">
+            <div className="bg-emerald-50 border border-emerald-100 p-4.5 rounded-xl flex items-start gap-3 transition-all duration-500">
               <div className="w-8 h-8 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-800 shrink-0 shadow-inner">
                 <ShieldCheck size={18} />
               </div>
@@ -315,7 +325,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
             type="button"
             disabled={step === 1}
             onClick={() => setStep(step - 1)}
-            className="btn-secondary py-2 px-4 text-xs font-semibold flex items-center gap-1.5 disabled:opacity-30"
+            className="btn-secondary py-2 px-4 text-xs font-semibold flex items-center gap-1.5 disabled:opacity-30 transition-all duration-200 cursor-pointer"
           >
             <ArrowLeft size={14} />
             <span>Back</span>
@@ -325,7 +335,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
             <button
               type="button"
               onClick={() => setStep(step + 1)}
-              className="btn-primary py-2 px-4 text-xs font-semibold flex items-center gap-1.5"
+              className="btn-primary py-2 px-4 text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 cursor-pointer"
             >
               <span>Continue</span>
               <ArrowRight size={14} />
@@ -333,8 +343,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
           ) : (
             <button
               type="submit"
-              disabled={submitting}
-              className="btn-primary py-2 px-6 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs"
+              disabled={submitting || !isStep4Ready}
+              className={`btn-primary py-2 px-6 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all duration-300 ${(!isStep4Ready || submitting) ? 'opacity-50 cursor-not-allowed scale-95' : 'cursor-pointer hover:scale-[1.02]'}`}
             >
               <ShoppingBag size={14} />
               <span>{submitting ? 'Syncing...' : 'Deploy Product'}</span>
