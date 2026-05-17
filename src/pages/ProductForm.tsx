@@ -63,14 +63,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab, editingP
 
   useEffect(() => {
     if (editingProductId) {
+      const prodId = editingProductId;
       async function loadProduct() {
         try {
-          const p = await api.getProduct(editingProductId);
+          const p = await api.getProduct(prodId);
           setName(p.name);
           setSlug(p.slug || '');
           setRegularPrice(p.regular_price || '');
           setSalePrice(p.sale_price || '');
-          setStockStatus(p.stock_status || 'instock');
+          setStockStatus(p.stock_status === 'outofstock' ? 'outofstock' : 'instock');
           setShortDesc(cleanHtmlForEditor(p.short_description || ''));
           setDesc(cleanHtmlForEditor(p.description || ''));
           setImages(p.images || []);
