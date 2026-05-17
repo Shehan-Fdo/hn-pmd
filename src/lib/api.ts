@@ -120,6 +120,16 @@ export const api = {
     });
   },
 
+  updateProduct: async (id: number, product: Omit<WCProduct, 'id'>) => {
+    return apiRequest<{ id: number }>(`/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product),
+    });
+  },
+
   deleteProduct: async (id: number) => {
     return apiRequest<{ success: boolean }>(`/products/${id}`, {
       method: 'DELETE',

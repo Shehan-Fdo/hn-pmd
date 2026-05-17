@@ -7,7 +7,7 @@ Minimal, clean, modern, and mobile-responsive admin workspace for syncing catalo
 - **Slate Light Theme**: Harmonious, high-contrast cool slate gray palette, flat off-white widgets, solid headers, clean gray borders, and custom shadow tokens. No distracting color gradients or purple borders.
 - **Store Overview**: Real-time overview of synced records, system log history sheets, and sync health stats.
 - **Category Manager**: Add, upload banners (R2 storage), list active categories, and remove categories.
-- **Create Product**: Multi-step creation pipeline for product data details, regular/sale price details, HTML description blocks, media gallery, product category tagging, and attribute management.
+- **Product Catalog & Editing (CRUD)**: Multi-step creation & edit pipeline for product details, pricing, descriptions (HTML tags parsed to plain text for visual clarity), media gallery sorting, category tagging, and attribute configurations. Equips double-click submit debounces and SEO slug safety locks.
 - **Mobile Responsive Layout**: Compact catalog views, responsive mobile overlays, smooth sidebars, sticky headers, and responsive drawers.
 
 ## Core Technologies

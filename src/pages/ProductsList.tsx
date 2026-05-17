@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Search, FolderOpen, Plus, Trash2, SlidersHorizontal, ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
+import { Search, FolderOpen, Plus, Trash2, SlidersHorizontal, ChevronLeft, ChevronRight, ShoppingBag, Pencil } from 'lucide-react';
 import { api } from '../lib/api';
 import type { WCProduct, WCCategory } from '../lib/api';
 
 interface ProductsListProps {
   setActiveTab: (tab: string) => void;
+  onEditProduct: (id: number) => void;
 }
 
-export const ProductsList: React.FC<ProductsListProps> = ({ setActiveTab }) => {
+export const ProductsList: React.FC<ProductsListProps> = ({ setActiveTab, onEditProduct }) => {
   const [products, setProducts] = useState<WCProduct[]>([]);
   const [categories, setCategories] = useState<WCCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -204,12 +205,20 @@ export const ProductsList: React.FC<ProductsListProps> = ({ setActiveTab }) => {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => setDeleteId(p.id)}
-                    className="p-2 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all duration-200 inline-flex items-center justify-center shrink-0 shadow-2xs bg-white border border-slate-200"
-                  >
-                    <Trash2 size={15} />
-                  </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() => onEditProduct(p.id)}
+                      className="p-2 rounded-lg text-slate-650 hover:text-slate-900 hover:bg-slate-50 transition-all duration-200 inline-flex items-center justify-center shadow-2xs bg-white border border-slate-200 cursor-pointer"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      onClick={() => setDeleteId(p.id)}
+                      className="p-2 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all duration-200 inline-flex items-center justify-center shadow-2xs bg-white border border-slate-200 cursor-pointer"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -276,12 +285,20 @@ export const ProductsList: React.FC<ProductsListProps> = ({ setActiveTab }) => {
                       </td>
 
                       <td className="py-4.5 px-6 text-right">
-                        <button
-                          onClick={() => setDeleteId(p.id)}
-                          className="p-2 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all duration-200 inline-flex items-center justify-center shadow-2xs bg-white border border-slate-200"
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => onEditProduct(p.id)}
+                            className="p-2 rounded-lg text-slate-650 hover:text-slate-900 hover:bg-slate-50 transition-all duration-200 inline-flex items-center justify-center shadow-2xs bg-white border border-slate-200 cursor-pointer"
+                          >
+                            <Pencil size={15} />
+                          </button>
+                          <button
+                            onClick={() => setDeleteId(p.id)}
+                            className="p-2 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all duration-200 inline-flex items-center justify-center shadow-2xs bg-white border border-slate-200 cursor-pointer"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

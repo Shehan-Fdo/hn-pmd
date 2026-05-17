@@ -9,9 +9,19 @@ import { Menu } from 'lucide-react';
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [editingProductId, setEditingProductId] = useState<number | null>(null);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+    setIsSidebarOpen(false);
+    if (tab !== 'product-form') {
+      setEditingProductId(null);
+    }
+  };
+
+  const handleEditProduct = (id: number) => {
+    setEditingProductId(id);
+    setActiveTab('product-form');
     setIsSidebarOpen(false);
   };
 
@@ -20,9 +30,9 @@ function App() {
       case 'overview':
         return <Overview setActiveTab={handleTabChange} />;
       case 'products':
-        return <ProductsList setActiveTab={handleTabChange} />;
+        return <ProductsList setActiveTab={handleTabChange} onEditProduct={handleEditProduct} />;
       case 'product-form':
-        return <ProductForm setActiveTab={handleTabChange} />;
+        return <ProductForm setActiveTab={handleTabChange} editingProductId={editingProductId} />;
       case 'categories':
         return <CategoriesManager />;
       default:

@@ -7,9 +7,10 @@ import { AttributeManager } from '../components/AttributeManager';
 
 interface ProductFormProps {
   setActiveTab: (tab: string) => void;
+  editingProductId?: number | null;
 }
 
-export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
+export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab, editingProductId }) => {
   const [step, setStep] = useState(1);
   const [categories, setCategories] = useState<WCCategory[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -28,6 +29,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
   const [selectedCats, setSelectedCats] = useState<number[]>([]);
   const [attributes, setAttributes] = useState<WCAttribute[]>([]);
   const [isStep4Ready, setIsStep4Ready] = useState(false);
+
+  const cleanHtmlForEditor = (html: string) => {
+    if (!html) return '';
+    let clean = html;
+    if (clean.startsWith('<p>') && clean.endsWith('</p>')) {
+      clean = clean.slice(3, -4);
+    }
+    clean = clean.replace(/<br\s*\/?>/gi, '\n');
+    return clean;
+  };
 
   useEffect(() => {
     if (step === 4) {
@@ -50,15 +61,40 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
     loadMeta();
   }, []);
 
+  useEffect(() => {
+    if (editingProductId) {
+      async function loadProduct() {
+        try {
+          const p = await api.getProduct(editingProductId);
+          setName(p.name);
+          setSlug(p.slug || '');
+          setRegularPrice(p.regular_price || '');
+          setSalePrice(p.sale_price || '');
+          setStockStatus(p.stock_status || 'instock');
+          setShortDesc(cleanHtmlForEditor(p.short_description || ''));
+          setDesc(cleanHtmlForEditor(p.description || ''));
+          setImages(p.images || []);
+          setSelectedCats((p.categories || []).map((c) => c.id));
+          setAttributes(p.attributes || []);
+        } catch (err) {
+          console.error('Failed to load product for editing:', err);
+        }
+      }
+      loadProduct();
+    }
+  }, [editingProductId]);
+
   const handleNameChange = (val: string) => {
     setName(val);
-    // Auto generate WooCommerce URL friendly slug
-    setSlug(
-      val
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-    );
+    if (!editingProductId) {
+      // Auto generate WooCommerce URL friendly slug
+      setSlug(
+        val
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+      );
+    }
   };
 
   const handleCategoryToggle = (catId: number) => {
@@ -98,12 +134,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
         attributes: attributes,
       };
 
-      await api.createProduct(finalProduct);
-      alert('Product created successfully and synced to D1/R2!');
+      if (editingProductId) {
+        await api.updateProduct(editingProductId, finalProduct);
+        alert('Product updated successfully!');
+      } else {
+        await api.createProduct(finalProduct);
+        alert('Product created successfully and synced to D1/R2!');
+      }
       setActiveTab('products');
     } catch (err: any) {
       console.error(err);
-      alert(`Product creation failed: ${err.message}`);
+      alert(`Operation failed: ${err.message}`);
     } finally {
       setSubmitting(false);
     }
@@ -126,10 +167,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
         </button>
         <div>
           <h2 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            Create Product
+            {editingProductId ? 'Edit Product' : 'Create Product'}
             <Sparkles size={18} className="text-slate-800" />
           </h2>
-          <p className="text-sm text-slate-550 mt-1">Configure details, images, and variables to sync.</p>
+          <p className="text-sm text-slate-550 mt-1">
+            {editingProductId ? 'Modify product parameters and sync changes.' : 'Configure details, images, and variables to sync.'}
+          </p>
         </div>
       </div>
 
@@ -347,7 +390,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ setActiveTab }) => {
               className={`btn-primary py-2 px-6 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all duration-300 ${(!isStep4Ready || submitting) ? 'opacity-50 cursor-not-allowed scale-95' : 'cursor-pointer hover:scale-[1.02]'}`}
             >
               <ShoppingBag size={14} />
-              <span>{submitting ? 'Syncing...' : 'Deploy Product'}</span>
+              <span>{submitting ? 'Syncing...' : editingProductId ? 'Save Changes' : 'Deploy Product'}</span>
             </button>
           )}
         </div>
