@@ -41,19 +41,19 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen text-slate-900">
+    <div className="flex flex-col md:flex-row bg-neutral-100 min-h-screen text-slate-900">
       {/* Mobile Top Header Bar */}
-      <header className="md:hidden flex items-center justify-between p-4 bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs">
+      <header className="md:hidden flex items-center justify-between px-4 py-3.5 bg-[#0f0f0f] sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shadow-sm">
-            <span className="font-bold text-white text-xs tracking-wider">H</span>
+          <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center">
+            <span className="font-black text-[#0f0f0f] text-xs tracking-widest">H</span>
           </div>
-          <span className="font-bold text-slate-900 tracking-wide text-sm">HN Store</span>
+          <span className="font-semibold text-white tracking-wide text-sm">HN Store</span>
         </div>
-        
+
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
+          className="p-1.5 text-neutral-400 hover:text-white transition-colors"
         >
           <Menu size={18} />
         </button>
@@ -61,8 +61,8 @@ function App() {
 
       {/* Backdrop overlay for mobile drawer */}
       {isSidebarOpen && (
-        <div 
-          className="md:hidden fixed inset-0 bg-slate-900/25 backdrop-blur-xs z-40 transition-opacity duration-300"
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
